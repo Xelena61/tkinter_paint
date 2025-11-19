@@ -51,6 +51,64 @@
         </div>
 
         <canvas id="paint" width="400" height="200"></canvas>
+       <script>
+    // Находим холст и берём контекст для рисования
+    const canvas = document.getElementById('paint');
+    const ctx = canvas.getContext('2d');
 
+    // Флаг "сейчас рисуем" и последние координаты
+    let drawing = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    // Получаем координаты курсора относительно холста
+    function getCanvasPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        };
+    }
+
+    // Нажали мышкой — начинаем рисовать
+    function startDrawing(e) {
+        drawing = true;
+        const pos = getCanvasPos(e);
+        lastX = pos.x;
+        lastY = pos.y;
+
+        // Настройки линии по умолчанию
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 4;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+    }
+
+    // Отпустили кнопку / ушли с холста — перестаём рисовать
+    function stopDrawing() {
+        drawing = false;
+    }
+
+    // Двигаем мышь — рисуем линию
+    function draw(e) {
+        if (!drawing) return;
+
+        const pos = getCanvasPos(e);
+
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+
+        lastX = pos.x;
+        lastY = pos.y;
+    }
+
+    // Слушатели событий мыши
+    canvas.addEventListener("mousedown", startDrawing);
+    canvas.addEventListener("mouseup", stopDrawing);
+    canvas.addEventListener("mouseleave", stopDrawing);
+    canvas.addEventListener("mousemove", draw);
+</script>
     </body>
-</html>
+    </html>
