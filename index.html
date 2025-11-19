@@ -51,64 +51,114 @@
         </div>
 
         <canvas id="paint" width="400" height="200"></canvas>
-       <script>
-    // Находим холст и берём контекст для рисования
-    const canvas = document.getElementById('paint');
-    const ctx = canvas.getContext('2d');
+       <script>const canvas = document.getElementById('paint');
+const ctx = canvas.getContext('2d');
 
-    // Флаг "сейчас рисуем" и последние координаты
-    let drawing = false;
-    let lastX = 0;
-    let lastY = 0;
+const colorPicker = document.getElementById('colorPicker');
+const brushSize = document.getElementById('brushSize');
+const brushSizeLabel = document.getElementById('brushSizeLabel');
+const clearBtn = document.getElementById('clear');
+const saveBtn = document.getElementById('save');
+const toolSelect = document.getElementById('tool');
 
-    // Получаем координаты курсора относительно холста
-    function getCanvasPos(e) {
-        const rect = canvas.getBoundingClientRect();
-        return {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
-        };
+let drawing = false;
+
+// --- запуск рисования ---
+function startDrawing(e) {
+    drawing = true;
+    ctx.beginPath();
+    ctx.moveTo(e.offsetX, e.offsetY);
+}
+
+// --- остановка рисования ---
+function stopDrawing() {
+    drawing = false;
+    ctx.beginPath();
+}
+
+// --- рисуем линию под курсором ---
+function draw(e) {
+    if (!drawing) return;
+
+    const size = Number(brushSize.value);
+    const tool = toolSelect.value;
+
+    ctx.lineWidth = size;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    // базовый цвет
+    ctx.strokeStyle = colorPicker.value;
+    ctx.globalAlpha = 1;
+
+    // маркер — полупрозрачный
+    if (tool === "marker") {
+        ctx.globalAlpha = 0.4;
     }
 
-    // Нажали мышкой — начинаем рисовать
-    function startDrawing(e) {
-        drawing = true;
-        const pos = getCanvasPos(e);
-        lastX = pos.x;
-        lastY = pos.y;
-
-        // Настройки линии по умолчанию
-        ctx.strokeStyle = "black";
-        ctx.lineWidth = 4;
-        ctx.lineCap = "round";
-        ctx.lineJoin = "round";
+    // каллиграфическая — другие концы линий
+    if (tool === "calligraphy") {
+        ctx.lineCap = "butt";
+        ctx.lineJoin = "miter";
     }
 
-    // Отпустили кнопку / ушли с холста — перестаём рисовать
-    function stopDrawing() {
-        drawing = false;
+    // ластик — рисуем цветом фона
+    if (tool === "erase") {
+        ctx.strokeStyle = "#ffffff";
     }
 
-    // Двигаем мышь — рисуем линию
-    function draw(e) {
-        if (!drawing) return;
-
-        const pos = getCanvasPos(e);
-
-        ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
-
-        lastX = pos.x;
-        lastY = pos.y;
+    // аэрограф — отдельная логика
+    if (tool === "spray") {
+        const dots = 25;
+        for (let i = 0; i < dots; i++) {
+            const angle = Math.random() * 2 * Math.PI;
+            const radius = Math.random() * size;
+            const x = e.offsetX + Math.cos(angle) * radius;
+            const y = e.offsetY + Math.sin(angle) * radius;
+            ctx.fillStyle = ctx.strokeStyle;
+            ctx.globalAlpha = 0.6;
+            ctx.fillRect(x, y, 1, 1);
+        }
+        ctx.globalAlpha = 1;
+        return;
     }
 
-    // Слушатели событий мыши
-    canvas.addEventListener("mousedown", startDrawing);
-    canvas.addEventListener("mouseup", stopDrawing);
-    canvas.addEventListener("mouseleave", stopDrawing);
-    canvas.addEventListener("mousemove", draw);
-</script>
+    // обычная линия (карандаш, маркер, каллиграфия, ластик)
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+}
+
+// --- очистка холста ---
+function clearCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#ffffff";  // белый фон, чтобы PNG не был прозрачный
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+// --- сохранение в PNG ---
+function savePNG() {
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png');
+    link.download = 'my_drawing.png';
+    link.click();
+}
+
+// начальная заливка белым
+clearCanvas();
+
+// события мыши
+canvas.addEventListener('mousedown', startDrawing);
+canvas.addEventListener('mouseup', stopDrawing);
+canvas.addEventListener('mouseleave', stopDrawing);
+canvas.addEventListener('mousemove', draw);
+
+// обновляем надпись толщины
+brushSize.addEventListener('input', () => {
+    brushSizeLabel.textContent = brushSize.value + ' px';
+});
+
+// кнопки
+clearBtn.addEventListener('click', clearCanvas);
+saveBtn.addEventListener('click', savePNG);</script>
     </body>
     </html>
