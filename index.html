@@ -26,6 +26,28 @@
 </head>
     <body>
         <div class="toolbar">
+            <label>
+                Цвет:
+                <input type="color" id="colorPicker" value="#000000">
+            </label>
+            <label>
+                Толщина:
+                <input type="range" id="brushSize" min="1" max="40" value="4">
+                <span id="brushSizeLabel">4 px</span>
+            </label>
+
+            <label>
+                Инструменты:
+                <select id="tool">
+                    <option value="pensil">Карандаш</option>
+                    <option value="marker">Маркер</option>
+                    <option value="calligraphy">Каллиграфия</option>
+                    <option value="spray">Аэрограф</option>
+                    <option value="erase">Ластик</option>
+                </select>
+            </label>
+            <button id="clear">Очистить</button>
+            <button id="save">Сохранить PNG</button>
         </div>
 
         <canvas id="paint" width="400" height="200"></canvas>
