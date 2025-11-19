@@ -200,6 +200,16 @@
             ctx.lineCap = "butt";
             ctx.lineJoin = "miter";
             break;
+        
+        case "eraser":
+            // Ластик: рисуем "белой кистью" потолще
+            ctx.globalAlpha = 1;
+            ctx.lineWidth = size * 2;      // ластик чуть толще выбранной толщины
+            ctx.lineCap = "round";
+            ctx.lineJoin = "round";
+            ctx.strokeStyle = "#ffffff";   // цвет фона холста
+            break;
+
     }
 
     ctx.lineTo(pos.x, pos.y);
