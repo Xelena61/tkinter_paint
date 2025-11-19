@@ -145,6 +145,11 @@
         const pos = getCanvasPos(e);
         ctx.beginPath();
         ctx.moveTo(pos.x, pos.y);
+    function stopDrawing() {
+        drawing = false;
+        ctx.beginPath();
+}
+
     }
 
  function draw(e) {
