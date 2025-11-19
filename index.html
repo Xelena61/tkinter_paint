@@ -44,11 +44,6 @@
             cursor: pointer;
         }
 
-        .toolbar select {
-            padding: 3px 6px;
-            font-size: 14px;
-        }
-
         .toolbar button {
             border: none;
             padding: 6px 12px;
@@ -61,17 +56,9 @@
             background: #f3f3f3;
         }
 
-        .toolbar button#clear:hover {
-            background: #e0e0e0;
-        }
-
         .toolbar button#save {
             background: #4caf50;
             color: #fff;
-        }
-
-        .toolbar button#save:hover {
-            background: #43a047;
         }
 
         canvas {
@@ -96,16 +83,6 @@
         <span id="brushSizeLabel">4 px</span>
     </label>
 
-    <label>
-        Инструмент:
-        <select id="tool">
-            <option value="pencil">Карандаш</option>
-            <option value="marker">Маркер</option>
-            <option value="calligraphy">Каллиграфическая</option>
-            <option value="spray">Аэрограф</option>
-        </select>
-    </label>
-
     <button id="clear">Очистить</button>
     <button id="save">Сохранить PNG</button>
 </div>
@@ -121,7 +98,6 @@
     const brushSizeLabel = document.getElementById("brushSizeLabel");
     const clearBtn = document.getElementById("clear");
     const saveBtn = document.getElementById("save");
-    const toolSelect = document.getElementById("tool");
 
     let drawing = false;
 
@@ -167,55 +143,11 @@
         if (!drawing) return;
 
         const pos = getCanvasPos(e);
-        const size = Number(brushSize.value);
-        const tool = toolSelect.value;
 
-        ctx.strokeStyle = colorPicker.value;
-        ctx.fillStyle = colorPicker.value;
-
-        // Настройки по умолчанию для линий
-        ctx.globalAlpha = 1;
+        ctx.lineWidth = brushSize.value;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
-
-        if (tool === "spray") {
-            // Аэрограф: много маленьких точек вокруг курсора
-            const dots = 25;
-            for (let i = 0; i < dots; i++) {
-                const angle = Math.random() * 2 * Math.PI;
-                const radius = Math.random() * size;
-                const x = pos.x + Math.cos(angle) * radius;
-                const y = pos.y + Math.sin(angle) * radius;
-                ctx.beginPath();
-                ctx.arc(x, y, size / 8, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            return;
-        }
-
-        // Настройки для разных кистей
-        switch (tool) {
-            case "pencil":
-                ctx.globalAlpha = 1;
-                ctx.lineWidth = size;
-                ctx.lineCap = "round";
-                ctx.lineJoin = "round";
-                break;
-
-            case "marker":
-                ctx.globalAlpha = 0.4;    // полупрозрачный маркер
-                ctx.lineWidth = size * 2; // толще линии
-                ctx.lineCap = "round";
-                ctx.lineJoin = "round";
-                break;
-
-            case "calligraphy":
-                ctx.globalAlpha = 1;
-                ctx.lineWidth = size;
-                ctx.lineCap = "butt";
-                ctx.lineJoin = "miter";
-                break;
-        }
+        ctx.strokeStyle = colorPicker.value;
 
         ctx.lineTo(pos.x, pos.y);
         ctx.stroke();
@@ -271,5 +203,3 @@
 
 </body>
 </html>
-
-
