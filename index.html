@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Рисовалка</title>
+    <style>
+        body {
+            margin: 0;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        canvas {
+            border: 2px solid #666;
+            background: #fff;
+            cursor: crosshair;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="paint" width="800" height="500"></canvas>
+
+<script>
+    const canvas = document.getElementById("paint");
+    const ctx = canvas.getContext("2d");
+
+    let drawing = false;
+
+    canvas.addEventListener("mousedown", () => {
+        drawing = true;
+        ctx.beginPath();
+    });
+
+    canvas.addEventListener("mouseup", () => {
+        drawing = false;
+    });
+
+    canvas.addEventListener("mousemove", (e) => {
+        if (!drawing) return;
+        ctx.lineWidth = 3;
+        ctx.lineCap = "round";
+        ctx.strokeStyle = "black";
+
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(e.offsetX, e.offsetY);
+    });
+</script>
+
+</body>
+</html>
