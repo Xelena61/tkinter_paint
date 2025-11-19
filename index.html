@@ -3,9 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <title>Рисовалка</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20;
+            background: #f0f0f0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont,
+            display: flex;
+            flex-direction: column;
+            aling-items: center;
+        }
+
+        .toolbar {
+            margin-bottom: 10px;
+        }
+
+        canvas {
+            border: 1px solid #666;
+            background: #ffffff;
+        }
+    </style>
 </head>
     <body>
         <div class="toolbar">
         </div>
+
+        <canvas id="paint" width="900" height="500"></canvas>
+
     </body>
 </html>
